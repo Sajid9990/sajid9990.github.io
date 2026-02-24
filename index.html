@@ -3,163 +3,304 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ramadan 2026 Mubarak</title>
+<title>Ramadan 2026 Ultra</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1c2833);
-    background-size: 400% 400%;
-    animation: gradientBG 12s ease infinite;
-    color: white;
-    text-align: center;
-    overflow-x: hidden;
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+
+/* ===== Animated Dark Background ===== */
+body{
+background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1c2833);
+background-size: 400% 400%;
+animation: gradientBG 12s ease infinite;
+color:white;
+min-height:100vh;
+overflow-x:hidden;
+position:relative;
+transition:0.4s;
 }
 
 @keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+0% { background-position: 0% 50%; }
+50% { background-position: 100% 50%; }
+100% { background-position: 0% 50%; }
 }
 
-.star {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: white;
-    animation: twinkle 2s infinite alternate;
+/* ===== Light Mode ===== */
+body.light{
+background:#f3f6fa;
+animation:none;
+color:#222;
 }
 
-@keyframes twinkle {
-    from { opacity: 0.2; }
-    to { opacity: 1; }
+body.light .card{
+background:white;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
-.container {
-    padding: 40px 15px;
-    animation: fadeIn 2s ease-in;
+body.light th{
+background:#203a43;
+color:white;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px);}
-    to { opacity: 1; transform: translateY(0);}
+body.light td{
+border-bottom:1px solid #ddd;
 }
 
-.moon {
-    font-size: 4rem;
-    animation: glow 2s infinite alternate;
+body.light tr:hover{background:#eee}
+body.light .progress-container{background:#ddd}
+body.light .toggle{background:#203a43;color:white}
+
+/* ===== Stars ===== */
+.star{
+position:absolute;
+width:2px;
+height:2px;
+background:white;
+animation: twinkle 2s infinite alternate;
+}
+@keyframes twinkle{from{opacity:0.2;}to{opacity:1;}}
+
+/* ===== Header ===== */
+header{text-align:center;padding:40px 20px;position:relative}
+h1{font-size:2.8rem;color:#ffd369}
+.toggle{
+position:absolute;top:20px;right:20px;
+cursor:pointer;padding:8px 14px;
+border-radius:20px;background:#ffd369;
+color:#000;font-weight:600;
+}
+.moon{font-size:60px;animation:glow 2s infinite alternate}
+@keyframes glow{
+from{text-shadow:0 0 10px #ffd369;}
+to{text-shadow:0 0 30px #ffd369,0 0 60px #ffd369;}
 }
 
-@keyframes glow {
-    from { text-shadow: 0 0 10px #ffd369; }
-    to { text-shadow: 0 0 25px #ffd369, 0 0 40px #ffd369; }
+/* ===== Card ===== */
+.card{
+width:95%;max-width:1100px;margin:30px auto;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(20px);
+border-radius:20px;padding:30px;
+box-shadow:0 10px 40px rgba(0,0,0,0.4);
 }
 
-h1 {
-    font-size: 2.8rem;
-    color: #ffd369;
-    margin-bottom: 40px;
+/* ===== Countdown ===== */
+.countdown{text-align:center;margin-bottom:20px;font-size:1.3rem;font-weight:600}
+
+/* ===== Table ===== */
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th{
+background:#ffd369;color:#203a43;
+padding:12px;
+}
+td{
+padding:10px;text-align:center;
+border-bottom:1px solid rgba(255,255,255,0.2);
+}
+tr:hover{
+background:rgba(255,255,255,0.2);
+transform:scale(1.01);
+transition:0.3s;
+}
+.today{
+background:#ffd36933 !important;
+border:2px solid #ffd369;
 }
 
-table {
-    width: 95%;
-    max-width: 850px;
-    margin: auto;
-    border-collapse: collapse;
-    background: rgba(255,255,255,0.08);
-    border-radius: 15px;
-    overflow: hidden;
+/* ===== Progress ===== */
+.progress-box{margin-top:20px}
+.progress-container{
+height:20px;background:#333;
+border-radius:20px;overflow:hidden;
+}
+.progress-bar{
+height:100%;width:0%;
+background:#ffd369;
+transition:0.5s;
 }
 
-th, td {
-    padding: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
+/* ===== Lantern ===== */
+.lantern{
+position:fixed;top:-50px;
+font-size:30px;
+animation:drop 12s linear infinite;
+opacity:0.6;
+}
+@keyframes drop{
+0%{transform:translateY(-100px);}
+100%{transform:translateY(110vh);}
 }
 
-th {
-    background: #ffd369;
-    color: #203a43;
-}
-
-tr:hover {
-    background: rgba(255,255,255,0.2);
-    transform: scale(1.01);
-    transition: 0.3s;
-}
-
-footer {
-    margin: 40px 0;
-    color: #ddd;
-}
+footer{text-align:center;padding:30px;opacity:0.8}
 </style>
 </head>
 
 <body>
 
-<script>
-for(let i=0;i<80;i++){
-    let star=document.createElement("div");
-    star.className="star";
-    star.style.top=Math.random()*100+"vh";
-    star.style.left=Math.random()*100+"vw";
-    star.style.animationDuration=(Math.random()*2+1)+"s";
-    document.body.appendChild(star);
-}
-</script>
+<header>
+<div class="toggle" onclick="toggleTheme()">Toggle Theme</div>
+<div class="moon">🌙</div>
+<h1>Ramadan Mubarak 2026 ✨</h1>
+</header>
 
-<div class="container">
+<div class="card">
+<div class="countdown" id="countdown"></div>
 
-    <div class="moon">🌙</div>
-    <h1>Ramadan Mubarak 2026 ✨</h1>
+<h2 style="text-align:center;margin-bottom:15px;">
+Sehri & Iftar Timings
+</h2>
 
-    <h2>📅 Ramadan 2026 Sehri & Iftar Timings</h2>
+<table id="ramadanTable">
+<tr>
+<th>Date</th>
+<th>Sehri</th>
+<th>Iftar</th>
+<th>Done</th>
+</tr>
+</table>
 
-    <table>
-        <tr>
-            <th>Date</th>
-            <th>Sehri</th>
-            <th>Iftar</th>
-        </tr>
-
-        <tr><td>19 Feb 2026</td><td>05:36 AM</td><td>06:15 PM</td></tr>
-        <tr><td>20 Feb 2026</td><td>05:35 AM</td><td>06:16 PM</td></tr>
-        <tr><td>21 Feb 2026</td><td>05:35 AM</td><td>06:17 PM</td></tr>
-        <tr><td>22 Feb 2026</td><td>05:34 AM</td><td>06:17 PM</td></tr>
-        <tr><td>23 Feb 2026</td><td>05:33 AM</td><td>06:18 PM</td></tr>
-        <tr><td>24 Feb 2026</td><td>05:32 AM</td><td>06:19 PM</td></tr>
-        <tr><td>25 Feb 2026</td><td>05:31 AM</td><td>06:19 PM</td></tr>
-        <tr><td>26 Feb 2026</td><td>05:30 AM</td><td>06:20 PM</td></tr>
-        <tr><td>27 Feb 2026</td><td>05:29 AM</td><td>06:21 PM</td></tr>
-        <tr><td>28 Feb 2026</td><td>05:28 AM</td><td>06:21 PM</td></tr>
-        <tr><td>01 Mar 2026</td><td>05:27 AM</td><td>06:22 PM</td></tr>
-        <tr><td>02 Mar 2026</td><td>05:26 AM</td><td>06:23 PM</td></tr>
-        <tr><td>03 Mar 2026</td><td>05:25 AM</td><td>06:23 PM</td></tr>
-        <tr><td>04 Mar 2026</td><td>05:24 AM</td><td>06:24 PM</td></tr>
-        <tr><td>05 Mar 2026</td><td>05:23 AM</td><td>06:25 PM</td></tr>
-        <tr><td>06 Mar 2026</td><td>05:22 AM</td><td>06:25 PM</td></tr>
-        <tr><td>07 Mar 2026</td><td>05:21 AM</td><td>06:26 PM</td></tr>
-        <tr><td>08 Mar 2026</td><td>05:20 AM</td><td>06:26 PM</td></tr>
-        <tr><td>09 Mar 2026</td><td>05:19 AM</td><td>06:27 PM</td></tr>
-        <tr><td>10 Mar 2026</td><td>05:18 AM</td><td>06:28 PM</td></tr>
-        <tr><td>11 Mar 2026</td><td>05:17 AM</td><td>06:28 PM</td></tr>
-        <tr><td>12 Mar 2026</td><td>05:15 AM</td><td>06:29 PM</td></tr>
-        <tr><td>13 Mar 2026</td><td>05:14 AM</td><td>06:29 PM</td></tr>
-        <tr><td>14 Mar 2026</td><td>05:13 AM</td><td>06:30 PM</td></tr>
-        <tr><td>15 Mar 2026</td><td>05:12 AM</td><td>06:31 PM</td></tr>
-        <tr><td>16 Mar 2026</td><td>05:11 AM</td><td>06:31 PM</td></tr>
-        <tr><td>17 Mar 2026</td><td>05:10 AM</td><td>06:32 PM</td></tr>
-        <tr><td>18 Mar 2026</td><td>05:08 AM</td><td>06:32 PM</td></tr>
-        <tr><td>19 Mar 2026</td><td>05:07 AM</td><td>06:33 PM</td></tr>
-        <tr><td>20 Mar 2026</td><td>05:06 AM</td><td>06:33 PM</td></tr>
-
-    </table>
-
-    <footer>
-        Ramadan 2026 🌙✨
-    </footer>
-
+<div class="progress-box">
+<p style="margin-bottom:5px;">Fasting Progress</p>
+<div class="progress-container">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+<p id="progressText" style="margin-top:5px;font-size:14px;"></p>
+</div>
 </div>
 
+<footer>Ramadan 2026 🌙✨</footer>
+
+<script>
+
+/* ===== Remember Theme ===== */
+if(localStorage.getItem("theme")==="light"){
+document.body.classList.add("light");
+}
+
+function toggleTheme(){
+document.body.classList.toggle("light");
+localStorage.setItem("theme",
+document.body.classList.contains("light")?"light":"dark");
+}
+
+/* ===== Stars ===== */
+for(let i=0;i<80;i++){
+let star=document.createElement("div");
+star.className="star";
+star.style.top=Math.random()*100+"vh";
+star.style.left=Math.random()*100+"vw";
+star.style.animationDuration=(Math.random()*2+1)+"s";
+document.body.appendChild(star);
+}
+
+/* ===== Lanterns ===== */
+for(let i=0;i<6;i++){
+let lantern=document.createElement("div");
+lantern.className="lantern";
+lantern.innerHTML="🏮";
+lantern.style.left=Math.random()*100+"vw";
+lantern.style.animationDuration=(8+Math.random()*6)+"s";
+document.body.appendChild(lantern);
+}
+
+/* ===== Convert 24h → 12h ===== */
+function formatTime(time24){
+let [hour, minute] = time24.split(":");
+hour = parseInt(hour);
+let ampm = hour >= 12 ? "PM" : "AM";
+hour = hour % 12;
+hour = hour ? hour : 12;
+return `${hour}:${minute} ${ampm}`;
+}
+
+/* ===== Ramadan Data ===== */
+const data=[
+["2026-02-19","05:36","18:15"],
+["2026-02-20","05:35","18:16"],
+["2026-02-21","05:35","18:17"],
+["2026-02-22","05:34","18:17"],
+["2026-02-23","05:33","18:18"],
+["2026-02-24","05:32","18:19"],
+["2026-02-25","05:31","18:19"],
+["2026-02-26","05:30","18:20"],
+["2026-02-27","05:29","18:21"],
+["2026-02-28","05:28","18:21"],
+["2026-03-01","05:27","18:22"],
+["2026-03-02","05:26","18:23"],
+["2026-03-03","05:25","18:23"],
+["2026-03-04","05:24","18:24"],
+["2026-03-05","05:23","18:25"],
+["2026-03-06","05:22","18:25"],
+["2026-03-07","05:21","18:26"],
+["2026-03-08","05:20","18:26"],
+["2026-03-09","05:19","18:27"],
+["2026-03-10","05:18","18:28"],
+["2026-03-11","05:17","18:28"],
+["2026-03-12","05:15","18:29"],
+["2026-03-13","05:14","18:29"],
+["2026-03-14","05:13","18:30"],
+["2026-03-15","05:12","18:31"],
+["2026-03-16","05:11","18:31"],
+["2026-03-17","05:10","18:32"],
+["2026-03-18","05:08","18:32"],
+["2026-03-19","05:07","18:33"],
+["2026-03-20","05:06","18:33"],
+];
+
+const table=document.getElementById("ramadanTable");
+const today=new Date().toISOString().split("T")[0];
+let completed=JSON.parse(localStorage.getItem("fastingUltra"))||{};
+
+data.forEach(row=>{
+let tr=document.createElement("tr");
+if(row[0]===today){tr.classList.add("today")}
+let checked=completed[row[0]]?"checked":"";
+tr.innerHTML=`
+<td>${new Date(row[0]).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}</td>
+<td>${formatTime(row[1])}</td>
+<td>${formatTime(row[2])}</td>
+<td><input type="checkbox" ${checked}
+onchange="toggleFast('${row[0]}')"></td>
+`;
+table.appendChild(tr);
+});
+
+function toggleFast(date){
+completed[date]=!completed[date];
+localStorage.setItem("fastingUltra",JSON.stringify(completed));
+updateProgress();
+}
+
+function updateProgress(){
+let count=Object.values(completed).filter(v=>v).length;
+let percent=(count/data.length)*100;
+document.getElementById("progressBar").style.width=percent+"%";
+document.getElementById("progressText").innerText=
+count+" / "+data.length+" completed ("+Math.floor(percent)+"%)";
+}
+updateProgress();
+
+/* ===== Countdown ===== */
+function updateCountdown(){
+let todayRow=data.find(d=>d[0]===today);
+if(!todayRow) return;
+let iftar=new Date(today+"T"+todayRow[2]+":00");
+let now=new Date();
+let diff=iftar-now;
+if(diff>0){
+let h=Math.floor(diff/1000/60/60);
+let m=Math.floor((diff/1000/60)%60);
+let s=Math.floor((diff/1000)%60);
+document.getElementById("countdown").innerText=
+"⏳ Iftar in: "+h+"h "+m+"m "+s+"s";
+}else{
+document.getElementById("countdown").innerText="Iftar Time 🎉";
+}
+}
+setInterval(updateCountdown,1000);
+
+</script>
 </body>
 </html>
