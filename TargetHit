@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TARGET HUNTER - Precision Shooter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #gameContainer {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        canvas {
+            display: block;
+            background: linear-gradient(180deg, #0f0f23 0%, #1a1a3e 100%);
+            cursor: crosshair;
+        }
+
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            pointer-events: none;
+        }
+
+        #ui div {
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #00d4ff;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #ammoDisplay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .bullet-icon {
+            width: 8px;
+            height: 20px;
+            background: linear-gradient(180deg, #ffd700 0%, #ff6b35 100%);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .bullet-icon.empty {
+            background: #333;
+            box-shadow: none;
+        }
+
+        #gameOver, #startScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 50px;
+            border-radius: 20px;
+            border: 3px solid #00d4ff;
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.3);
+        }
+
+        #gameOver {
+            display: none;
+            border-color: #ff4757;
+            box-shadow: 0 0 50px rgba(255, 71, 87, 0.3);
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #gameOver h1 {
+            background: linear-gradient(90deg, #ff4757, #ff6b35);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 18px;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+
+        .score-display {
+            font-size: 36px;
+            color: #ffd700;
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        button {
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+        }
+
+        #restartBtn {
+            background: linear-gradient(90deg, #ff4757, #ff6b35);
+        }
+
+        #restartBtn:hover {
+            box-shadow: 0 0 30px rgba(255, 71, 87, 0.6);
+        }
+
+        .controls {
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+            line-height: 2;
+        }
+
+        .controls span {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        #comboDisplay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #ff6b35;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.8);
+        }
+
+        #comboDisplay.active {
+            opacity: 1;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .hit-marker {
+            position: absolute;
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 20px;
+            pointer-events: none;
+            animation: floatUp 1s forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-50px); }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="900" height="600"></canvas>
+
+        <div id="ui">
+            <div><span class="stat-label">Score</span><br><span id="score">0</span></div>
+            <div><span class="stat-label">Targets</span><br><span id="targets">0</span></div>
+            <div><span class="stat-label">Accuracy</span><br><span id="accuracy">100%</span></div>
+        </div>
+
+        <div id="ammoDisplay"></div>
+
+        <div id="comboDisplay">COMBO x<span id="comboCount">2</span>!</div>
+
+        <div id="startScreen">
+            <h1>TARGET HUNTER</h1>
+            <div class="subtitle">PRECISION SHOOTING</div>
+            <button id="startBtn">START MISSION</button>
+            <div class="controls">
+                <div><span>MOUSE</span> - Aim</div>
+                <div><span>CLICK</span> - Shoot</div>
+                <div><span>R</span> - Reload</div>
+                <div>Hit targets before they disappear!</div>
+            </div>
+        </div>
+
+        <div id="gameOver">
+            <h1>MISSION COMPLETE</h1>
+            <div class="score-display"><span id="finalScore">0</span></div>
+            <div style="color: #888; margin-bottom: 10px;">Targets Destroyed: <span id="finalTargets" style="color: #00d4ff;">0</span></div>
+            <div style="color: #888; margin-bottom: 20px;">Accuracy: <span id="finalAccuracy" style="color: #00d4ff;">0%</span></div>
+            <button id="restartBtn">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game state
+        let gameRunning = false;
+        let score = 0;
+        let targetsDestroyed = 0;
+        let shotsFired = 0;
+        let shotsHit = 0;
+        let combo = 0;
+        let comboTimer = 0;
+        let maxAmmo = 10;
+        let currentAmmo = 10;
+        let reloadTime = 0;
+
+        // Mouse position
+        let mouseX = canvas.width / 2;
+        let mouseY = canvas.height / 2;
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+        });
+
+        // Game objects
+        let bullets = [];
+        let targets = [];
+        let particles = [];
+        let floatingTexts = [];
+
+        // Target types
+        const targetTypes = {
+            normal: { color: '#ff6b35', radius: 30, points: 10, speed: 2 },
+            fast: { color: '#00d4ff', radius: 20, points: 20, speed: 4 },
+            heavy: { color: '#ffd700', radius: 40, points: 30, speed: 1.5, health: 2 },
+            bonus: { color: '#ff00ff', radius: 25, points: 50, speed: 3, life: 180 }
+        };
+
+        // Bullet class
+        class Bullet {
+            constructor(x, y, targetX, targetY) {
+                this.x = x;
+                this.y = y;
+                const angle = Math.atan2(targetY - y, targetX - x);
+                this.vx = Math.cos(angle) * 15;
+                this.vy = Math.sin(angle) * 15;
+                this.radius = 4;
+                this.trail = [];
+            }
+
+            update() {
+                this.trail.push({x: this.x, y: this.y});
+                if (this.trail.length > 8) this.trail.shift();
+
+                this.x += this.vx;
+                this.y += this.vy;
+            }
+
+            draw() {
+                // Draw trail
+                this.trail.forEach((pos, i) => {
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, this.radius * (i / 8), 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 215, 0, ${i * 0.15})`;
+                    ctx.fill();
+                });
+
+                // Draw bullet
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffd700';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#ff6b35';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        // Target class
+        class Target {
+            constructor(type = 'normal') {
+                const config = targetTypes[type];
+                this.type = type;
+                this.x = Math.random() * (canvas.width - 100) + 50;
+                this.y = canvas.height + 50;
+                this.radius = config.radius;
+                this.color = config.color;
+                this.points = config.points;
+                this.speed = config.speed;
+                this.health = config.health || 1;
+                this.maxHealth = this.health;
+                this.life = config.life || 300 + Math.random() * 200;
+                this.maxLife = this.life;
+                this.angle = 0;
+                this.wobble = Math.random() * Math.PI * 2;
+
+                // Movement pattern
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = -this.speed;
+            }
+
+            update() {
+                this.x += this.vx + Math.sin(this.wobble) * 0.5;
+                this.y += this.vy;
+                this.wobble += 0.05;
+                this.angle += 0.02;
+                this.life--;
+
+                // Bounce off walls
+                if (this.x < this.radius || this.x > canvas.width - this.radius) {
+                    this.vx *= -1;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+
+                // Outer glow
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = this.color;
+
+                // Target body
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+
+                // Inner rings
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius * 0.7, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius * 0.4, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Center
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius * 0.2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Health indicator for heavy targets
+                if (this.health > 1) {
+                    ctx.rotate(-this.angle);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(this.health, 0, 5);
+                }
+
+                ctx.restore();
+
+                // Life bar
+                const barWidth = this.radius * 2;
+                const barHeight = 4;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fillRect(this.x - barWidth/2, this.y - this.radius - 10, barWidth, barHeight);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x - barWidth/2, this.y - this.radius - 10, barWidth * (this.life / this.maxLife), barHeight);
+            }
+
+            isOffScreen() {
+                return this.y < -100 || this.life <= 0;
+            }
+        }
+
+        // Particle class
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.life = 1;
+                this.decay = Math.random() * 0.03 + 0.02;
+                this.color = color;
+                this.size = Math.random() * 6 + 3;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.1; // gravity
+                this.life -= this.decay;
+                this.size *= 0.95;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Floating text
+        class FloatingText {
+            constructor(x, y, text, color) {
+                this.x = x;
+                this.y = y;
+                this.text = text;
+                this.color = color;
+                this.life = 1;
+                this.vy = -2;
+            }
+
+            update() {
+                this.y += this.vy;
+                this.life -= 0.02;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fillText(this.text, this.x, this.y);
+                ctx.restore();
+            }
+        }
+
+        // Create explosion
+        function createExplosion(x, y, color, count = 20) {
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        // Spawn targets
+        function spawnTargets() {
+            if (targets.length < 5 && Math.random() < 0.03) {
+                const rand = Math.random();
+                let type = 'normal';
+                if (rand > 0.7) type = 'fast';
+                else if (rand > 0.5) type = 'heavy';
+                else if (rand > 0.95) type = 'bonus';
+                targets.push(new Target(type));
+            }
+        }
+
+        // Shoot
+        function shoot() {
+            if (currentAmmo > 0 && reloadTime <= 0) {
+                bullets.push(new Bullet(canvas.width / 2, canvas.height - 50, mouseX, mouseY));
+                currentAmmo--;
+                shotsFired++;
+                updateAmmoDisplay();
+
+                // Recoil effect
+                canvas.style.transform = `translateY(2px)`;
+                setTimeout(() => canvas.style.transform = 'none', 50);
+            } else if (currentAmmo === 0) {
+                reload();
+            }
+        }
+
+        // Reload
+        function reload() {
+            if (reloadTime <= 0) {
+                reloadTime = 60;
+            }
+        }
+
+        // Update ammo display
+        function updateAmmoDisplay() {
+            const display = document.getElementById('ammoDisplay');
+            display.innerHTML = '';
+            for (let i = 0; i < maxAmmo; i++) {
+                const bullet = document.createElement('div');
+                bullet.className = 'bullet-icon' + (i >= currentAmmo ? ' empty' : '');
+                display.appendChild(bullet);
+            }
+        }
+
+        // Check collisions
+        function checkCollisions() {
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const b = bullets[i];
+                let hit = false;
+
+                for (let j = targets.length - 1; j >= 0; j--) {
+                    const t = targets[j];
+                    const dx = b.x - t.x;
+                    const dy = b.y - t.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < t.radius + b.radius) {
+                        t.health--;
+                        hit = true;
+
+                        if (t.health <= 0) {
+                            // Target destroyed
+                            createExplosion(t.x, t.y, t.color);
+
+                            // Calculate score with combo
+                            let points = t.points;
+                            if (combo > 1) {
+                                points *= combo;
+                                floatingTexts.push(new FloatingText(t.x, t.y, `x${combo}!`, '#ff6b35'));
+                            }
+                            score += points;
+                            targetsDestroyed++;
+                            shotsHit++;
+
+                            // Combo system
+                            combo++;
+                            comboTimer = 120;
+                            document.getElementById('comboCount').textContent = combo;
+                            document.getElementById('comboDisplay').classList.add('active');
+
+                            floatingTexts.push(new FloatingText(t.x, t.y - 30, `+${points}`, '#ffd700'));
+                            targets.splice(j, 1);
+                        } else {
+                            // Hit but not destroyed
+                            createExplosion(b.x, b.y, '#fff', 10);
+                            shotsHit++;
+                        }
+                        break;
+                    }
+                }
+
+                if (hit || b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) {
+                    bullets.splice(i, 1);
+                }
+            }
+        }
+
+        // Draw crosshair
+        function drawCrosshair() {
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#00d4ff';
+
+            const size = 20;
+
+            // Outer circle
+            ctx.beginPath();
+            ctx.arc(mouseX, mouseY, size, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Inner dot
+            ctx.fillStyle = '#00d4ff';
+            ctx.beginPath();
+            ctx.arc(mouseX, mouseY, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cross lines
+            ctx.beginPath();
+            ctx.moveTo(mouseX - size - 5, mouseY);
+            ctx.lineTo(mouseX - 5, mouseY);
+            ctx.moveTo(mouseX + 5, mouseY);
+            ctx.lineTo(mouseX + size + 5, mouseY);
+            ctx.moveTo(mouseX, mouseY - size - 5);
+            ctx.lineTo(mouseX, mouseY - 5);
+            ctx.moveTo(mouseX, mouseY + 5);
+            ctx.lineTo(mouseX, mouseY + size + 5);
+            ctx.stroke();
+
+            ctx.shadowBlur = 0;
+        }
+
+        // Draw turret
+        function drawTurret() {
+            const x = canvas.width / 2;
+            const y = canvas.height - 50;
+            const angle = Math.atan2(mouseY - y, mouseX - x);
+
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Base
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(0, 0, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Barrel
+            ctx.rotate(angle + Math.PI / 2);
+            ctx.fillStyle = '#555';
+            ctx.fillRect(-8, -40, 16, 40);
+            ctx.fillStyle = '#00d4ff';
+            ctx.fillRect(-6, -38, 12, 36);
+
+            ctx.restore();
+        }
+
+        // Update UI
+        function updateUI() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('targets').textContent = targetsDestroyed;
+            const accuracy = shotsFired > 0 ? Math.round((shotsHit / shotsFired) * 100) : 100;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+
+        // Game loop
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Reload logic
+            if (reloadTime > 0) {
+                reloadTime--;
+                if (reloadTime === 0) {
+                    currentAmmo = maxAmmo;
+                    updateAmmoDisplay();
+                }
+            }
+
+            // Combo timer
+            if (comboTimer > 0) {
+                comboTimer--;
+                if (comboTimer === 0) {
+                    combo = 0;
+                    document.getElementById('comboDisplay').classList.remove('active');
+                }
+            }
+
+            spawnTargets();
+            checkCollisions();
+
+            // Update and draw targets
+            targets = targets.filter(t => !t.isOffScreen());
+            targets.forEach(t => {
+                t.update();
+                t.draw();
+            });
+
+            // Update and draw bullets
+            bullets.forEach(b => {
+                b.update();
+                b.draw();
+            });
+
+            // Update and draw particles
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Update and draw floating texts
+            floatingTexts = floatingTexts.filter(t => t.life > 0);
+            floatingTexts.forEach(t => {
+                t.update();
+                t.draw();
+            });
+
+            drawTurret();
+            drawCrosshair();
+            updateUI();
+
+            // Reload indicator
+            if (reloadTime > 0) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00d4ff';
+                ctx.font = 'bold 36px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('RELOADING...', canvas.width / 2, canvas.height / 2);
+
+                // Progress bar
+                const progress = (60 - reloadTime) / 60;
+                ctx.strokeStyle = '#00d4ff';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(canvas.width / 2 - 100, canvas.height / 2 + 20, 200, 20);
+                ctx.fillStyle = '#00d4ff';
+                ctx.fillRect(canvas.width / 2 - 100, canvas.height / 2 + 20, 200 * progress, 20);
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start game
+        function startGame() {
+            score = 0;
+            targetsDestroyed = 0;
+            shotsFired = 0;
+            shotsHit = 0;
+            combo = 0;
+            currentAmmo = maxAmmo;
+            bullets = [];
+            targets = [];
+            particles = [];
+            floatingTexts = [];
+            reloadTime = 0;
+
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameOver').style.display = 'none';
+            updateAmmoDisplay();
+            gameRunning = true;
+            gameLoop();
+
+            // End game after 60 seconds
+            setTimeout(endGame, 60000);
+        }
+
+        // End game
+        function endGame() {
+            gameRunning = false;
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalTargets').textContent = targetsDestroyed;
+            const accuracy = shotsFired > 0 ? Math.round((shotsHit / shotsFired) * 100) : 0;
+            document.getElementById('finalAccuracy').textContent = accuracy + '%';
+            document.getElementById('gameOver').style.display = 'block';
+        }
+
+        // Event listeners
+        canvas.addEventListener('mousedown', (e) => {
+            if (gameRunning) shoot();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyR' && gameRunning) {
+                reload();
+            }
+        });
+
+        document.getElementById('startBtn').addEventListener('click', startGame);
+        document.getElementById('restartBtn').addEventListener('click', startGame);
+
+        // Initial ammo display
+        updateAmmoDisplay();
+    </script>
+</body>
+</html>
