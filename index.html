@@ -1,306 +1,940 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="day">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ramadan 2026 Ultra</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
+<title>PawVerse — Animal Life, Reimagined</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+:root{--ease:cubic-bezier(.4,0,.2,1);}
+[data-theme="day"]{
+  --bg:#f0f5ee;--bg2:#e4ede0;--bg3:#f5faf3;
+  --surface:#fff;--surface2:#f2f8f0;
+  --text:#0e1a0c;--text2:#3d5c38;--text3:#7a9c74;
+  --accent:#2e7d32;--accent2:#66bb6a;--accent3:#1b5e20;
+  --border:rgba(46,125,50,.13);
+  --shadow:0 4px 24px rgba(30,80,30,.10);
+  --shadow-lg:0 12px 48px rgba(30,80,30,.16);
+  --nav-bg:rgba(240,245,238,.94);
+  --tag-bg:rgba(46,125,50,.08);
+  --star:#f9a825;
+  --hero-gradient:linear-gradient(135deg,#dcedc8 0%,#f1f8e9 50%,#c8e6c9 100%);
+}
+[data-theme="night"]{
+  --bg:#0a0f0a;--bg2:#0f1510;--bg3:#131a13;
+  --surface:#162016;--surface2:#1a2a1a;
+  --text:#e0ede0;--text2:#90b890;--text3:#4a6e4a;
+  --accent:#4caf50;--accent2:#81c784;--accent3:#a5d6a7;
+  --border:rgba(76,175,80,.12);
+  --shadow:0 4px 24px rgba(0,0,0,.45);
+  --shadow-lg:0 12px 48px rgba(0,0,0,.65);
+  --nav-bg:rgba(10,15,10,.96);
+  --tag-bg:rgba(76,175,80,.12);
+  --star:#ffd54f;
+  --hero-gradient:linear-gradient(135deg,#0d1a0d 0%,#142014 50%,#0a150a 100%);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);transition:background .4s var(--ease),color .4s var(--ease);}
+a{text-decoration:none;color:inherit;}
 
-/* ===== Animated Dark Background ===== */
-body{
-background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1c2833);
-background-size: 400% 400%;
-animation: gradientBG 12s ease infinite;
-color:white;
-min-height:100vh;
-overflow-x:hidden;
-position:relative;
-transition:0.4s;
+/* grain */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.45;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");}
+
+/* ===== TWO-PAGE SPA ===== */
+.page{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;background:var(--bg);
+  transition:transform .48s var(--ease),opacity .48s var(--ease);will-change:transform,opacity;}
+#homePage{transform:translateX(0);opacity:1;z-index:1;}
+#articlePage{transform:translateX(100%);opacity:0;z-index:2;pointer-events:none;}
+body.on-article #homePage{transform:translateX(-80px);opacity:0;pointer-events:none;}
+body.on-article #articlePage{transform:translateX(0);opacity:1;pointer-events:all;}
+
+/* progress */
+#progressBar{position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:2000;transition:width .12s linear;}
+
+/* ===== NAV ===== */
+nav{position:sticky;top:0;z-index:100;height:64px;
+  background:var(--nav-bg);backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;display:flex;align-items:center;justify-content:space-between;
+  transition:background .4s,border-color .4s;flex-shrink:0;}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;
+  font-size:1.5rem;font-weight:900;color:var(--accent);cursor:pointer;letter-spacing:-.5px;}
+.nav-logo-icon{width:36px;height:36px;background:var(--accent);border-radius:50% 50% 50% 20%;
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:transform .3s var(--ease);}
+.nav-logo:hover .nav-logo-icon{transform:rotate(-12deg) scale(1.1);}
+.nav-links{display:flex;align-items:center;gap:2rem;list-style:none;}
+.nav-links a{font-size:.875rem;font-weight:500;color:var(--text2);letter-spacing:.02em;
+  transition:color .2s;position:relative;cursor:pointer;}
+.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;
+  background:var(--accent);transition:width .3s var(--ease);}
+.nav-links a:hover{color:var(--accent);}
+.nav-links a:hover::after{width:100%;}
+.nav-right{display:flex;align-items:center;gap:1rem;}
+.nav-search{position:relative;display:flex;align-items:center;}
+.nav-search input{background:var(--bg2);border:1px solid var(--border);border-radius:24px;
+  padding:6px 16px 6px 36px;font-size:.8rem;font-family:'DM Sans',sans-serif;
+  color:var(--text);width:180px;transition:all .3s var(--ease);outline:none;}
+.nav-search input::placeholder{color:var(--text3);}
+.nav-search input:focus{width:220px;border-color:var(--accent);box-shadow:0 0 0 3px rgba(46,125,50,.12);}
+.nav-search-icon{position:absolute;left:11px;color:var(--text3);font-size:.9rem;pointer-events:none;}
+.theme-toggle{width:52px;height:28px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:14px;cursor:pointer;display:flex;align-items:center;padding:0 3px;flex-shrink:0;}
+.theme-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:.75rem;
+  transition:transform .4s var(--ease);box-shadow:0 2px 6px rgba(0,0,0,.2);}
+[data-theme="night"] .theme-thumb{transform:translateX(24px);}
+@media(max-width:900px){.nav-links{display:none;}}
+
+/* ===== HERO ===== */
+.hero{background:var(--hero-gradient);padding:80px 2rem 60px;position:relative;overflow:hidden;transition:background .4s;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;
+  background:radial-gradient(circle,var(--accent2) 0%,transparent 70%);opacity:.15;border-radius:50%;}
+.hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;
+  background:radial-gradient(circle,var(--accent3) 0%,transparent 70%);opacity:.10;border-radius:50%;}
+.hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:center;position:relative;z-index:1;}
+.hero-text{animation:fadeUp .8s var(--ease) both;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--tag-bg);
+  border:1px solid rgba(46,125,50,.2);color:var(--accent);font-size:.75rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:1.5rem;}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5vw,3.6rem);
+  font-weight:900;line-height:1.1;letter-spacing:-.02em;margin-bottom:1.25rem;}
+.hero-title em{font-style:italic;color:var(--accent);}
+.hero-desc{color:var(--text2);font-size:1rem;line-height:1.7;max-width:440px;margin-bottom:2rem;}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;
+  padding:12px 28px;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;
+  box-shadow:0 4px 16px rgba(46,125,50,.30);transition:transform .2s,box-shadow .2s;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(46,125,50,.40);}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:transparent;
+  color:var(--text2);padding:12px 24px;border-radius:8px;font-weight:500;font-size:.9rem;
+  border:1px solid var(--border);cursor:pointer;transition:all .2s;}
+.btn-secondary:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.hero-card{background:var(--surface);border-radius:20px;overflow:hidden;
+  box-shadow:var(--shadow-lg);animation:fadeUp .8s .2s var(--ease) both;
+  cursor:pointer;transition:transform .3s var(--ease);}
+.hero-card:hover{transform:translateY(-5px);}
+.hero-card-img{height:240px;background:linear-gradient(135deg,#a5d6a7,#c8e6c9,#81c784);
+  display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;overflow:hidden;}
+.hero-card-img::before{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.35) 0%,transparent 60%);}
+.hero-card-emoji{position:relative;z-index:1;}
+.hero-card-badge{position:absolute;top:16px;left:16px;background:var(--accent);color:#fff;
+  font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;border-radius:12px;}
+.hero-card-body{padding:1.5rem;}
+.hero-card-cat{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:8px;}
+.hero-card-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;line-height:1.3;margin-bottom:10px;}
+.hero-card-meta{display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--text3);}
+.stars-gold{color:var(--star);letter-spacing:-1px;}
+
+/* categories */
+.cats-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 2rem;overflow-x:auto;scrollbar-width:none;}
+.cats-bar::-webkit-scrollbar{display:none;}
+.cats-inner{max-width:1200px;margin:0 auto;display:flex;}
+.cat-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 20px;font-size:.82rem;font-weight:500;
+  color:var(--text2);border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;transition:all .2s;}
+.cat-btn:hover,.cat-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* main layout */
+.main-wrap{max-width:1200px;margin:0 auto;padding:3rem 2rem;display:grid;grid-template-columns:1fr 320px;gap:3rem;}
+.sec-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem;}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;display:flex;align-items:center;gap:12px;}
+.sec-bar{width:4px;height:28px;background:var(--accent);border-radius:2px;}
+.view-all{font-size:.8rem;font-weight:600;color:var(--accent);text-transform:uppercase;
+  letter-spacing:.06em;display:flex;align-items:center;gap:4px;cursor:pointer;transition:gap .2s;}
+.view-all:hover{gap:8px;}
+.tabs{display:flex;background:var(--bg2);border-radius:10px;padding:4px;margin-bottom:1.5rem;width:fit-content;}
+.tab-btn{padding:7px 18px;border-radius:7px;font-size:.82rem;font-weight:500;color:var(--text2);
+  cursor:pointer;transition:all .2s;background:none;border:none;font-family:'DM Sans',sans-serif;}
+.tab-btn.active{background:var(--surface);color:var(--accent);font-weight:600;box-shadow:var(--shadow);}
+
+/* cards */
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;margin-bottom:3rem;}
+.card{background:var(--surface);border-radius:14px;overflow:hidden;border:1px solid var(--border);
+  cursor:pointer;transition:all .3s var(--ease);}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:rgba(46,125,50,.25);}
+.card-img-wrap{height:170px;overflow:hidden;position:relative;background:var(--bg2);}
+.card-emoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:3.5rem;transition:transform .4s var(--ease);}
+.card:hover .card-emoji{transform:scale(1.08);}
+.card-lbl{position:absolute;top:10px;left:10px;background:var(--accent);color:#fff;
+  font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 10px;border-radius:10px;}
+.card-body{padding:1rem 1.1rem 1.1rem;}
+.card-cat{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:5px;}
+.card-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.35;margin-bottom:10px;}
+.card-foot{display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:var(--text3);}
+.c-stars{color:var(--star);font-size:.8rem;letter-spacing:-1px;}
+
+/* hcard */
+.hcard-list{display:flex;flex-direction:column;gap:1rem;margin-bottom:3rem;}
+.hcard{display:flex;gap:1rem;background:var(--surface);border-radius:12px;border:1px solid var(--border);
+  overflow:hidden;cursor:pointer;transition:all .3s var(--ease);}
+.hcard:hover{transform:translateX(4px);box-shadow:var(--shadow);border-color:rgba(46,125,50,.25);}
+.hcard-img{width:100px;flex-shrink:0;background:var(--bg2);display:flex;align-items:center;
+  justify-content:center;font-size:2.4rem;transition:transform .3s;}
+.hcard:hover .hcard-img{transform:scale(1.05);}
+.hcard-body{padding:.9rem 1rem .9rem 0;flex:1;}
+.hcard-rank{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--text3);margin-bottom:4px;}
+.hcard-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;line-height:1.3;margin-bottom:8px;}
+.hcard-foot{display:flex;gap:10px;font-size:.74rem;color:var(--text3);}
+.h-stars{color:var(--star);font-size:.78rem;letter-spacing:-1px;}
+
+/* pop grid */
+.pop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:3rem;}
+.pop-card{background:var(--surface);border-radius:12px;overflow:hidden;border:1px solid var(--border);
+  cursor:pointer;transition:all .3s var(--ease);}
+.pop-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:rgba(46,125,50,.25);}
+.pop-img{height:120px;background:var(--bg2);display:flex;align-items:center;justify-content:center;
+  font-size:2.8rem;transition:transform .3s;}
+.pop-card:hover .pop-img{transform:scale(1.06);}
+.pop-body{padding:.8rem;}
+.pop-title{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;line-height:1.3;margin-bottom:6px;}
+.pop-meta{display:flex;align-items:center;justify-content:space-between;font-size:.7rem;color:var(--text3);}
+.p-stars{color:var(--star);font-size:.72rem;}
+
+/* rec list */
+.rec-list{display:flex;flex-direction:column;margin-bottom:3rem;}
+.rec-item{display:flex;gap:1.25rem;padding:1.25rem 0;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:all .2s;}
+.rec-item:first-child{padding-top:0;}
+.rec-item:last-child{border-bottom:none;}
+.rec-item:hover{padding-left:6px;}
+.rec-img{width:90px;height:90px;border-radius:10px;background:var(--bg2);display:flex;
+  align-items:center;justify-content:center;font-size:2.4rem;flex-shrink:0;transition:transform .3s;}
+.rec-item:hover .rec-img{transform:scale(1.04);}
+.rec-body{flex:1;}
+.rec-cat{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--accent3);margin-bottom:5px;}
+.rec-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.3;margin-bottom:6px;}
+.rec-meta{font-size:.73rem;color:var(--text3);}
+
+/* sidebar */
+.sidebar{display:flex;flex-direction:column;gap:2rem;}
+.s-widget{background:var(--surface);border-radius:16px;border:1px solid var(--border);overflow:hidden;}
+.s-widget-hdr{padding:1rem 1.25rem .8rem;border-bottom:1px solid var(--border);
+  font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+.s-widget-body{padding:1rem 1.25rem;}
+.t-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:opacity .2s;}
+.t-item:last-child{border-bottom:none;}
+.t-item:hover{opacity:.75;}
+.t-num{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--accent);font-weight:700;min-width:20px;}
+.t-img{width:44px;height:44px;border-radius:8px;background:var(--bg2);display:flex;align-items:center;
+  justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.t-info{flex:1;}
+.t-title{font-size:.82rem;font-weight:600;line-height:1.3;margin-bottom:2px;}
+.t-meta{font-size:.7rem;color:var(--text3);}
+.tags-cloud{display:flex;flex-wrap:wrap;gap:8px;}
+.tag{background:var(--bg2);border:1px solid var(--border);color:var(--text2);font-size:.75rem;
+  font-weight:500;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.tag:hover{background:var(--tag-bg);border-color:var(--accent);color:var(--accent);}
+.nl-widget{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);border-radius:16px;padding:1.5rem;color:#fff;}
+.nl-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;margin-bottom:8px;}
+.nl-desc{font-size:.82rem;opacity:.85;line-height:1.5;margin-bottom:1rem;}
+.nl-input{width:100%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);
+  border-radius:8px;padding:9px 14px;font-size:.82rem;color:#fff;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:8px;}
+.nl-input::placeholder{color:rgba(255,255,255,.65);}
+.nl-btn{width:100%;background:rgba(255,255,255,.95);color:var(--accent);border:none;border-radius:8px;
+  padding:9px;font-size:.85rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .2s,transform .2s;}
+.nl-btn:hover{background:#fff;transform:translateY(-1px);}
+.stats-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.stat{background:var(--bg2);border-radius:10px;padding:12px;text-align:center;}
+.stat-n{font-family:'Space Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:4px;}
+.stat-l{font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;}
+
+/* footer */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 2rem 2rem;}
+.ft-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:2.5rem;}
+.ft-logo{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;
+  font-size:1.4rem;font-weight:900;color:var(--accent);margin-bottom:1rem;}
+.ft-logo-icon{width:32px;height:32px;background:var(--accent);border-radius:50% 50% 50% 20%;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.ft-desc{font-size:.85rem;color:var(--text2);line-height:1.7;max-width:260px;margin-bottom:1.25rem;}
+.ft-socials{display:flex;gap:10px;}
+.ft-soc{width:36px;height:36px;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
+.ft-soc:hover{background:var(--accent);border-color:var(--accent);transform:translateY(-2px);}
+.ft-col-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:1rem;}
+.ft-links{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.ft-links a{font-size:.83rem;color:var(--text2);transition:color .2s;display:flex;align-items:center;gap:6px;}
+.ft-links a:hover{color:var(--accent);}
+.ft-links a::before{content:'→';font-size:.7rem;color:var(--accent);}
+.ft-bottom{max-width:1200px;margin:0 auto;padding-top:2rem;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--text3);}
+
+/* back to top */
+.btt{position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;background:var(--accent);
+  color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;cursor:pointer;opacity:0;transform:translateY(16px);
+  transition:all .3s var(--ease);box-shadow:0 4px 16px rgba(46,125,50,.3);z-index:500;}
+.btt.show{opacity:1;transform:translateY(0);}
+.btt:hover{transform:translateY(-3px)!important;}
+
+/* animation */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;}
+  .main-wrap{grid-template-columns:1fr;}
+  .ft-inner{grid-template-columns:1fr 1fr;gap:2rem;}
+  .pop-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .card-grid,.pop-grid{grid-template-columns:1fr;}
+  .ft-inner{grid-template-columns:1fr;}
+  .hero{padding:60px 1.5rem 40px;}
 }
 
-@keyframes gradientBG {
-0% { background-position: 0% 50%; }
-50% { background-position: 100% 50%; }
-100% { background-position: 0% 50%; }
-}
+/* ====================================================
+   ARTICLE PAGE STYLES
+   ==================================================== */
+.art-nav-back{display:flex;align-items:center;gap:8px;color:var(--accent);
+  font-size:.85rem;font-weight:600;cursor:pointer;padding:4px 0;
+  transition:gap .2s;}
+.art-nav-back:hover{gap:12px;}
 
-/* ===== Light Mode ===== */
-body.light{
-background:#f3f6fa;
-animation:none;
-color:#222;
-}
+.art-wrap{max-width:800px;margin:0 auto;padding:2.5rem 2rem 5rem;}
 
-body.light .card{
-background:white;
-box-shadow:0 10px 30px rgba(0,0,0,0.1);
-}
+/* breadcrumb */
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--text3);margin-bottom:2rem;flex-wrap:wrap;}
+.breadcrumb .bc-link{color:var(--accent);cursor:pointer;transition:opacity .2s;}
+.breadcrumb .bc-link:hover{opacity:.7;}
+.bc-sep{color:var(--border);}
 
-body.light th{
-background:#203a43;
-color:white;
-}
+/* article hero */
+.art-hero{border-radius:20px;overflow:hidden;margin-bottom:2.5rem;position:relative;
+  height:380px;display:flex;align-items:center;justify-content:center;
+  font-size:9rem;box-shadow:var(--shadow-lg);
+  background:linear-gradient(135deg,var(--bg2),var(--accent2));}
+.art-hero::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.5) 0%,rgba(0,0,0,.1) 50%,transparent 100%);}
+.art-hero-badge{position:absolute;top:20px;left:20px;z-index:1;background:var(--accent);color:#fff;
+  font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:5px 14px;border-radius:14px;}
+.art-hero-em{position:relative;z-index:1;}
 
-body.light td{
-border-bottom:1px solid #ddd;
-}
+/* meta bar */
+.art-meta{display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem;flex-wrap:wrap;
+  padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.art-chip{display:flex;align-items:center;gap:5px;font-size:.8rem;color:var(--text3);}
+.art-chip strong{color:var(--text2);font-weight:600;}
+.art-s{color:var(--star);font-size:1.15rem;letter-spacing:1px;}
+.art-share{margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--tag-bg);
+  border:1px solid var(--border);color:var(--accent);font-size:.78rem;font-weight:600;
+  padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;border:none;}
+.art-share:hover{background:var(--accent);color:#fff;}
 
-body.light tr:hover{background:#eee}
-body.light .progress-container{background:#ddd}
-body.light .toggle{background:#203a43;color:white}
+/* title */
+.art-title{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,2.9rem);
+  font-weight:900;line-height:1.15;letter-spacing:-.02em;margin-bottom:1.5rem;}
+.art-lead{font-size:1.1rem;line-height:1.8;color:var(--text2);margin-bottom:2rem;
+  padding-left:1rem;border-left:3px solid var(--accent2);}
 
-/* ===== Stars ===== */
-.star{
-position:absolute;
-width:2px;
-height:2px;
-background:white;
-animation: twinkle 2s infinite alternate;
-}
-@keyframes twinkle{from{opacity:0.2;}to{opacity:1;}}
+/* body */
+.art-body{font-size:1.02rem;line-height:1.9;color:var(--text2);}
+.art-body p{margin-bottom:1.4rem;}
+.art-body strong{color:var(--text);font-weight:600;}
+.art-body h3{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;
+  color:var(--text);margin:2rem 0 .8rem;}
+.pull-quote{border-left:4px solid var(--accent);padding:.9rem 1.4rem;margin:2rem 0;
+  background:var(--tag-bg);border-radius:0 10px 10px 0;
+  font-family:'Playfair Display',serif;font-size:1.1rem;font-style:italic;color:var(--text);line-height:1.6;}
+.art-img-block{margin:2rem 0;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,var(--bg2),var(--bg3));
+  height:200px;display:flex;align-items:center;justify-content:center;font-size:4rem;border:1px solid var(--border);}
+.art-img-cap{font-size:.78rem;color:var(--text3);text-align:center;margin-top:.5rem;font-style:italic;}
 
-/* ===== Header ===== */
-header{text-align:center;padding:40px 20px;position:relative}
-h1{font-size:2.8rem;color:#ffd369}
-.toggle{
-position:absolute;top:20px;right:20px;
-cursor:pointer;padding:8px 14px;
-border-radius:20px;background:#ffd369;
-color:#000;font-weight:600;
-}
-.moon{font-size:60px;animation:glow 2s infinite alternate}
-@keyframes glow{
-from{text-shadow:0 0 10px #ffd369;}
-to{text-shadow:0 0 30px #ffd369,0 0 60px #ffd369;}
-}
+/* tags */
+.art-tags-sec{margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border);}
+.art-tags-lbl{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:.8rem;}
+.art-tags-row{display:flex;flex-wrap:wrap;gap:8px;}
+.art-tag{background:var(--bg2);border:1px solid var(--border);color:var(--text2);font-size:.76rem;
+  font-weight:500;padding:5px 14px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.art-tag:hover{background:var(--tag-bg);color:var(--accent);border-color:var(--accent);}
 
-/* ===== Card ===== */
-.card{
-width:95%;max-width:1100px;margin:30px auto;
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(20px);
-border-radius:20px;padding:30px;
-box-shadow:0 10px 40px rgba(0,0,0,0.4);
-}
+/* author */
+.author-box{margin-top:2.5rem;padding:1.5rem;background:var(--surface2);border-radius:16px;
+  border:1px solid var(--border);display:flex;gap:1.25rem;}
+.author-av{width:56px;height:56px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.6rem;}
+.author-lbl{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:3px;}
+.author-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;margin-bottom:5px;}
+.author-bio{font-size:.82rem;color:var(--text2);line-height:1.6;}
 
-/* ===== Countdown ===== */
-.countdown{text-align:center;margin-bottom:20px;font-size:1.3rem;font-weight:600}
-
-/* ===== Table ===== */
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th{
-background:#ffd369;color:#203a43;
-padding:12px;
-}
-td{
-padding:10px;text-align:center;
-border-bottom:1px solid rgba(255,255,255,0.2);
-}
-tr:hover{
-background:rgba(255,255,255,0.2);
-transform:scale(1.01);
-transition:0.3s;
-}
-.today{
-background:#ffd36933 !important;
-border:2px solid #ffd369;
-}
-
-/* ===== Progress ===== */
-.progress-box{margin-top:20px}
-.progress-container{
-height:20px;background:#333;
-border-radius:20px;overflow:hidden;
-}
-.progress-bar{
-height:100%;width:0%;
-background:#ffd369;
-transition:0.5s;
-}
-
-/* ===== Lantern ===== */
-.lantern{
-position:fixed;top:-50px;
-font-size:30px;
-animation:drop 12s linear infinite;
-opacity:0.6;
-}
-@keyframes drop{
-0%{transform:translateY(-100px);}
-100%{transform:translateY(110vh);}
-}
-
-footer{text-align:center;padding:30px;opacity:0.8}
+/* related */
+.related-sec{margin-top:3rem;}
+.related-ttl{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;
+  margin-bottom:1.5rem;display:flex;align-items:center;gap:12px;}
+.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.rel-card{background:var(--surface);border-radius:12px;overflow:hidden;border:1px solid var(--border);
+  cursor:pointer;transition:all .3s var(--ease);}
+.rel-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:rgba(46,125,50,.25);}
+.rel-img{height:100px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:2.4rem;transition:transform .3s;}
+.rel-card:hover .rel-img{transform:scale(1.07);}
+.rel-body{padding:.75rem;}
+.rel-cat{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:4px;}
+.rel-title{font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;line-height:1.3;}
+@media(max-width:600px){.related-grid{grid-template-columns:1fr 1fr;}.art-wrap{padding:1.5rem 1.25rem 4rem;}}
 </style>
 </head>
-
 <body>
 
-<header>
-<div class="toggle" onclick="toggleTheme()">Toggle Theme</div>
-<div class="moon">🌙</div>
-<h1>Ramadan Mubarak 2026 ✨</h1>
-</header>
+<div id="progressBar"></div>
 
-<div class="card">
-<div class="countdown" id="countdown"></div>
+<!-- ================================================
+     HOME PAGE
+     ================================================ -->
+<div class="page" id="homePage">
+<nav>
+  <div class="nav-logo" onclick="goHome()">
+    <div class="nav-logo-icon">🐾</div>PawVerse
+  </div>
+  <ul class="nav-links">
+    <li><a onclick="homeScrollTo('newest')">Newest</a></li>
+    <li><a onclick="homeScrollTo('rated')">Top Rated</a></li>
+    <li><a onclick="homeScrollTo('popular')">Popular</a></li>
+    <li><a onclick="homeScrollTo('recommended')">Picks</a></li>
+    <li><a onclick="homeScrollTo('categories')">Categories</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-search"><span class="nav-search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search animals…">
+    </div>
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <div class="theme-thumb"><span id="themeIcon">☀️</span></div>
+    </div>
+  </div>
+</nav>
 
-<h2 style="text-align:center;margin-bottom:15px;">
-Sehri & Iftar Timings
-</h2>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <span class="hero-eyebrow">🌿 The Animal World Awaits</span>
+      <h1 class="hero-title">Stories from the<br><em>Wild & Beloved</em><br>World of Pets</h1>
+      <p class="hero-desc">Discover heartwarming stories, expert guides, and stunning photography from the fascinating world of animals — from household companions to wild wonders.</p>
+      <div class="hero-cta">
+        <span class="btn-primary" onclick="homeScrollTo('newest')">Explore Stories →</span>
+        <span class="btn-secondary" onclick="homeScrollTo('categories')">Browse Categories</span>
+      </div>
+    </div>
+    <div class="hero-card" onclick="openArticle({emoji:'🐈',cat:'Cats',title:'The Cat-Human Connection',date:'Apr 7, 2026',stars:'★★★☆☆'})">
+      <div class="hero-card-img">
+        <span class="hero-card-emoji">🐈</span>
+        <span class="hero-card-badge">Featured</span>
+      </div>
+      <div class="hero-card-body">
+        <div class="hero-card-cat">🐱 Cats</div>
+        <div class="hero-card-title">The Secret Language Cats Use Only With Humans</div>
+        <div class="hero-card-meta"><span>Apr 7, 2026</span><span class="stars-gold">★★★★☆</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<table id="ramadanTable">
-<tr>
-<th>Date</th>
-<th>Sehri</th>
-<th>Iftar</th>
-<th>Done</th>
-</tr>
-</table>
-
-<div class="progress-box">
-<p style="margin-bottom:5px;">Fasting Progress</p>
-<div class="progress-container">
-<div class="progress-bar" id="progressBar"></div>
+<!-- CATEGORIES -->
+<div class="cats-bar" id="categories">
+  <div class="cats-inner">
+    <div class="cat-btn active" onclick="filterCat(this)"><span>🌿</span> All</div>
+    <div class="cat-btn" onclick="filterCat(this)"><span>🐱</span> Cats</div>
+    <div class="cat-btn" onclick="filterCat(this)"><span>🐶</span> Dogs</div>
+    <div class="cat-btn" onclick="filterCat(this)"><span>🦜</span> Birds</div>
+    <div class="cat-btn" onclick="filterCat(this)"><span>🦁</span> Wildlife</div>
+    <div class="cat-btn" onclick="filterCat(this)"><span>🐠</span> Fish</div>
+    <div class="cat-btn" onclick="filterCat(this)"><span>🦎</span> Reptiles</div>
+    <div class="cat-btn" onclick="filterCat(this)"><span>❤️</span> Pet Care</div>
+    <div class="cat-btn" onclick="filterCat(this)"><span>🏆</span> Training</div>
+  </div>
 </div>
-<p id="progressText" style="margin-top:5px;font-size:14px;"></p>
-</div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+  <main>
+    <section id="newest" class="reveal">
+      <div class="sec-hdr">
+        <h2 class="sec-title"><span class="sec-bar"></span>Newest Stories</h2>
+        <span class="view-all">View All →</span>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(this)">Latest</button>
+        <button class="tab-btn" onclick="switchTab(this)">This Week</button>
+        <button class="tab-btn" onclick="switchTab(this)">This Month</button>
+      </div>
+      <div class="card-grid" id="newestGrid"></div>
+    </section>
+
+    <section id="rated" class="reveal">
+      <div class="sec-hdr">
+        <h2 class="sec-title"><span class="sec-bar"></span>Highest Rated</h2>
+        <span class="view-all">View All →</span>
+      </div>
+      <div class="hcard-list" id="ratedList"></div>
+    </section>
+
+    <section id="popular" class="reveal">
+      <div class="sec-hdr">
+        <h2 class="sec-title"><span class="sec-bar"></span>Popular Right Now</h2>
+        <span class="view-all">View All →</span>
+      </div>
+      <div class="pop-grid" id="popularGrid"></div>
+    </section>
+
+    <section id="recommended" class="reveal">
+      <div class="sec-hdr">
+        <h2 class="sec-title"><span class="sec-bar"></span>Editor's Picks</h2>
+        <span class="view-all">View All →</span>
+      </div>
+      <div class="rec-list" id="recList"></div>
+    </section>
+  </main>
+
+  <aside class="sidebar">
+    <div class="s-widget">
+      <div class="s-widget-hdr">📊 Community Stats</div>
+      <div class="s-widget-body">
+        <div class="stats-g">
+          <div class="stat"><div class="stat-n">12K+</div><div class="stat-l">Stories</div></div>
+          <div class="stat"><div class="stat-n">340K</div><div class="stat-l">Readers</div></div>
+          <div class="stat"><div class="stat-n">98</div><div class="stat-l">Breeds</div></div>
+          <div class="stat"><div class="stat-n">4.8★</div><div class="stat-l">Rating</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="s-widget">
+      <div class="s-widget-hdr">🔥 Trending Today</div>
+      <div class="s-widget-body" id="trendingWidget"></div>
+    </div>
+    <div class="nl-widget">
+      <div class="nl-title">🐾 Weekly Paw Post</div>
+      <div class="nl-desc">Get the best animal stories, tips, and photos delivered every Sunday.</div>
+      <input type="email" class="nl-input" placeholder="your@email.com">
+      <button class="nl-btn" onclick="subscribe(this)">Subscribe Free</button>
+    </div>
+    <div class="s-widget">
+      <div class="s-widget-hdr">🏷️ Browse Tags</div>
+      <div class="s-widget-body">
+        <div class="tags-cloud">
+          <span class="tag">#cats</span><span class="tag">#dogs</span><span class="tag">#wildlife</span>
+          <span class="tag">#petcare</span><span class="tag">#nutrition</span><span class="tag">#training</span>
+          <span class="tag">#kittens</span><span class="tag">#puppies</span><span class="tag">#aquarium</span>
+          <span class="tag">#birds</span><span class="tag">#exotic</span><span class="tag">#veterinary</span>
+          <span class="tag">#behavior</span><span class="tag">#grooming</span>
+        </div>
+      </div>
+    </div>
+    <div class="s-widget">
+      <div class="s-widget-hdr">⚡ Quick Reads</div>
+      <div class="s-widget-body">
+        <div class="t-item" onclick="openArticle({emoji:'🐶',cat:'Dogs',title:'Where Do Dogs Come From?',date:'Apr 2026',stars:'★★★★☆'})">
+          <div class="t-img">🐶</div><div class="t-info"><div class="t-title">Why dogs tilt their heads</div><div class="t-meta">2 min read</div></div>
+        </div>
+        <div class="t-item" onclick="openArticle({emoji:'🦋',cat:'Wildlife',title:'Butterfly Migration Secrets',date:'Apr 2026',stars:'★★★★☆'})">
+          <div class="t-img">🦋</div><div class="t-info"><div class="t-title">Butterfly migration secrets</div><div class="t-meta">3 min read</div></div>
+        </div>
+        <div class="t-item" onclick="openArticle({emoji:'🐠',cat:'Fish',title:'Your Perfect Fish Tank',date:'Apr 2026',stars:'★★★★☆'})">
+          <div class="t-img">🐠</div><div class="t-info"><div class="t-title">Setting up your first tank</div><div class="t-meta">4 min read</div></div>
+        </div>
+        <div class="t-item" onclick="openArticle({emoji:'🐱',cat:'Cats',title:'The Cat-Human Connection',date:'Apr 2026',stars:'★★★☆☆'})">
+          <div class="t-img">🐱</div><div class="t-info"><div class="t-title">Cat body language decoded</div><div class="t-meta">3 min read</div></div>
+        </div>
+      </div>
+    </div>
+  </aside>
 </div>
 
-<footer>Ramadan 2026 🌙✨</footer>
+<footer>
+  <div class="ft-inner">
+    <div>
+      <div class="ft-logo"><div class="ft-logo-icon">🐾</div>PawVerse</div>
+      <p class="ft-desc">Your trusted companion for animal stories, pet care guides, and wildlife discoveries from around the globe.</p>
+      <div class="ft-socials">
+        <div class="ft-soc">𝕏</div><div class="ft-soc">📷</div><div class="ft-soc">f</div><div class="ft-soc">▶</div>
+      </div>
+    </div>
+    <div>
+      <div class="ft-col-title">Explore</div>
+      <ul class="ft-links">
+        <li><a>Newest Articles</a></li><li><a>Top Rated</a></li>
+        <li><a>Popular Stories</a></li><li><a>Editor's Picks</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="ft-col-title">Categories</div>
+      <ul class="ft-links">
+        <li><a>Cats & Kittens</a></li><li><a>Dogs & Puppies</a></li>
+        <li><a>Wildlife</a></li><li><a>Birds</a></li><li><a>Aquatic Life</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="ft-col-title">Company</div>
+      <ul class="ft-links">
+        <li><a>About Us</a></li><li><a>Write for Us</a></li>
+        <li><a>Privacy Policy</a></li><li><a>Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <span>© 2026 PawVerse. All rights reserved.</span>
+    <span>Made with 🐾 for animal lovers</span>
+  </div>
+</footer>
+<div class="btt" id="btt" onclick="document.getElementById('homePage').scrollTo({top:0,behavior:'smooth'})">↑</div>
+</div><!-- /homePage -->
+
+
+<!-- ================================================
+     ARTICLE PAGE
+     ================================================ -->
+<div class="page" id="articlePage">
+<nav>
+  <div class="nav-logo" onclick="goHome()">
+    <div class="nav-logo-icon">🐾</div>PawVerse
+  </div>
+  <ul class="nav-links">
+    <li><a onclick="goHome()">← Back to Home</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <div class="theme-thumb"><span id="themeIcon2">☀️</span></div>
+    </div>
+  </div>
+</nav>
+
+<div class="art-wrap">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <span class="bc-link" onclick="goHome()">🏠 Home</span>
+    <span class="bc-sep">›</span>
+    <span class="bc-link" id="bcCat">Category</span>
+    <span class="bc-sep">›</span>
+    <span id="bcTitle" style="color:var(--text2);"></span>
+  </div>
+
+  <!-- Hero image -->
+  <div class="art-hero" id="artHero">
+    <span class="art-hero-badge" id="artHeroBadge"></span>
+    <span class="art-hero-em" id="artHeroEm"></span>
+  </div>
+
+  <!-- Meta -->
+  <div class="art-meta">
+    <div class="art-chip">📅 <strong id="artDate"></strong></div>
+    <div class="art-chip">📁 <strong id="artCat"></strong></div>
+    <div class="art-chip">⏱ <strong>5 min read</strong></div>
+    <div class="art-s" id="artStars"></div>
+    <button class="art-share" onclick="doShare()">🔗 Share</button>
+  </div>
+
+  <!-- Title + lead -->
+  <h1 class="art-title" id="artTitle"></h1>
+  <p class="art-lead" id="artLead"></p>
+
+  <!-- Body -->
+  <div class="art-body" id="artBody"></div>
+
+  <!-- Tags -->
+  <div class="art-tags-sec">
+    <div class="art-tags-lbl">Tags</div>
+    <div class="art-tags-row" id="artTagsRow"></div>
+  </div>
+
+  <!-- Author -->
+  <div class="author-box">
+    <div class="author-av">✍️</div>
+    <div>
+      <div class="author-lbl">Written by</div>
+      <div class="author-name">Dr. Maya Patel</div>
+      <div class="author-bio">Animal behaviorist and wildlife journalist with 12 years of experience. Contributor to Nature Magazine and National Geographic's digital platform.</div>
+    </div>
+  </div>
+
+  <!-- Related -->
+  <div class="related-sec">
+    <div class="related-ttl"><span class="sec-bar"></span>You Might Also Like</div>
+    <div class="related-grid" id="relatedGrid"></div>
+  </div>
+</div>
+</div><!-- /articlePage -->
+
 
 <script>
-
-/* ===== Remember Theme ===== */
-if(localStorage.getItem("theme")==="light"){
-document.body.classList.add("light");
-}
-
-function toggleTheme(){
-document.body.classList.toggle("light");
-localStorage.setItem("theme",
-document.body.classList.contains("light")?"light":"dark");
-}
-
-/* ===== Stars ===== */
-for(let i=0;i<80;i++){
-let star=document.createElement("div");
-star.className="star";
-star.style.top=Math.random()*100+"vh";
-star.style.left=Math.random()*100+"vw";
-star.style.animationDuration=(Math.random()*2+1)+"s";
-document.body.appendChild(star);
-}
-
-/* ===== Lanterns ===== */
-for(let i=0;i<6;i++){
-let lantern=document.createElement("div");
-lantern.className="lantern";
-lantern.innerHTML="🏮";
-lantern.style.left=Math.random()*100+"vw";
-lantern.style.animationDuration=(8+Math.random()*6)+"s";
-document.body.appendChild(lantern);
-}
-
-/* ===== Convert 24h → 12h ===== */
-function formatTime(time24){
-let [hour, minute] = time24.split(":");
-hour = parseInt(hour);
-let ampm = hour >= 12 ? "PM" : "AM";
-hour = hour % 12;
-hour = hour ? hour : 12;
-return `${hour}:${minute} ${ampm}`;
-}
-
-/* ===== Ramadan Data ===== */
-const data=[
-["2026-02-19","05:36","18:15"],
-["2026-02-20","05:35","18:16"],
-["2026-02-21","05:35","18:17"],
-["2026-02-22","05:34","18:17"],
-["2026-02-23","05:33","18:18"],
-["2026-02-24","05:32","18:19"],
-["2026-02-25","05:31","18:19"],
-["2026-02-26","05:30","18:20"],
-["2026-02-27","05:29","18:21"],
-["2026-02-28","05:28","18:21"],
-["2026-03-01","05:27","18:22"],
-["2026-03-02","05:26","18:23"],
-["2026-03-03","05:25","18:23"],
-["2026-03-04","05:24","18:24"],
-["2026-03-05","05:23","18:25"],
-["2026-03-06","05:22","18:25"],
-["2026-03-07","05:21","18:26"],
-["2026-03-08","05:20","18:26"],
-["2026-03-09","05:19","18:27"],
-["2026-03-10","05:18","18:28"],
-["2026-03-11","05:17","18:28"],
-["2026-03-12","05:15","18:29"],
-["2026-03-13","05:14","18:29"],
-["2026-03-14","05:13","18:30"],
-["2026-03-15","05:12","18:31"],
-["2026-03-16","05:11","18:31"],
-["2026-03-17","05:10","18:32"],
-["2026-03-18","05:08","18:32"],
-["2026-03-19","05:07","18:33"],
-["2026-03-20","05:06","18:33"],
+// ================================================
+// DATA
+// ================================================
+const newestData=[
+  {emoji:'🐈',cat:'Cats',label:'New',title:'The Cat-Human Connection',date:'Apr 7, 2026',stars:'★★★☆☆'},
+  {emoji:'🧠',cat:'Cats',label:'Hot',title:'How Smart Are Cats Really?',date:'Apr 3, 2026',stars:'★★★☆☆'},
+  {emoji:'💰',cat:'Pet Care',label:'Tips',title:'Pet Care on a Budget',date:'Apr 3, 2026',stars:'★★★★★'},
+  {emoji:'✈️',cat:'Travel',label:'Guide',title:'Best Pet Travel Carriers 2026',date:'Apr 3, 2026',stars:'★★★☆☆'},
+  {emoji:'🧘',cat:'Wellness',label:'New',title:'Pets and Emotional Balance',date:'Apr 2, 2026',stars:'★★★★☆'},
+  {emoji:'🦜',cat:'Birds',label:'Featured',title:'Parrots That Learn 500 Words',date:'Apr 1, 2026',stars:'★★★★★'},
+];
+const ratedData=[
+  {emoji:'🐟',cat:'Fish',title:'Sink or Swim? Aquatic Wonders',stars:'★★★☆☆',views:'14.2K',rank:'01'},
+  {emoji:'🐕',cat:'Dogs',title:'Where Do Dogs Come From?',stars:'★★★★☆',views:'22.8K',rank:'02'},
+  {emoji:'🐆',cat:'Wildlife',title:'Cheetah: The Speed King',stars:'★★★☆☆',views:'18.1K',rank:'03'},
+  {emoji:'🐶',cat:'Dogs',title:'English Cocker Spaniel Guide',stars:'★★★☆☆',views:'9.7K',rank:'04'},
+  {emoji:'🐄',cat:'Wildlife',title:'Fun Facts About Dairy Cows',stars:'★★★★★',views:'11.3K',rank:'05'},
+];
+const popularData=[
+  {emoji:'🦌',cat:'Wildlife',title:'Ibex Cliff Survival Test',stars:'★★★★☆',reads:'31K'},
+  {emoji:'🐠',cat:'Fish',title:'Your Perfect Fish Tank',stars:'★★★★☆',reads:'27K'},
+  {emoji:'🏠',cat:'Pet Care',title:'Safe Havens for Your Pet',stars:'★★★☆☆',reads:'19K'},
+  {emoji:'💧',cat:'Pet Care',title:'Keeping Pets Hydrated',stars:'★★★★★',reads:'15K'},
+  {emoji:'🌿',cat:'Pet Care',title:'Healthy Skin for Happy Pets',stars:'★★★★☆',reads:'13K'},
+  {emoji:'🦔',cat:'Wildlife',title:'Hedgehog: Tiny Night Walker',stars:'★★★★☆',reads:'11K'},
+];
+const recData=[
+  {emoji:'🙈',cat:'Behavior',title:"Why Cats Ignore You (And How to Fix It)",date:'2026-Apr-01'},
+  {emoji:'👃',cat:'Dogs',title:"A Dog's Extraordinary Senses Explained",date:'2026-Mar-31'},
+  {emoji:'🐞',cat:'Wildlife',title:"The Ladybug's Tale: Tiny but Mighty",date:'2026-Mar-31'},
+  {emoji:'🦁',cat:'Wildlife',title:'Lion Pride: Life Inside the Savanna Circle',date:'2026-Mar-30'},
+  {emoji:'🐢',cat:'Reptiles',title:'Tortoise or Turtle? The Big Difference',date:'2026-Mar-29'},
+];
+const trendingData=[
+  {emoji:'🦅',cat:'Wildlife',title:'Eagle vs Falcon: Who Wins?',meta:'8.4K reading now',rank:'01'},
+  {emoji:'🐈‍⬛',cat:'Cats',title:'Are Black Cats Really Unlucky?',meta:'5.1K reading now',rank:'02'},
+  {emoji:'🐳',cat:'Wildlife',title:'Whale Songs: Ocean Melodies',meta:'3.7K reading now',rank:'03'},
+  {emoji:'🦊',cat:'Wildlife',title:'Urban Foxes: City Survivors',meta:'2.9K reading now',rank:'04'},
 ];
 
-const table=document.getElementById("ramadanTable");
-const today=new Date().toISOString().split("T")[0];
-let completed=JSON.parse(localStorage.getItem("fastingUltra"))||{};
+// ================================================
+// ARTICLE CONTENT DB
+// ================================================
+const artDB={
+  'The Cat-Human Connection':{
+    lead:"Cats and humans have shared a remarkable bond for over 10,000 years — yet it remains one of the most beautifully misunderstood relationships in the animal kingdom. Unlike dogs, cats largely chose us.",
+    body:`
+<p>The story of how cats came to live with humans is not one of domestication in the traditional sense. Cats were never herded, trained to pull sleds, or bred to guard. Instead, they simply <strong>moved in</strong> — drawn to the grain stores of early agricultural settlements, where rodents were plentiful and the living was good.</p>
+<div class="pull-quote">"The cat chose to live with humans — not the other way around. That distinction changes everything about how we should understand them."</div>
+<h3>The Science of Cat Attachment</h3>
+<p>Research from the University of Lincoln found that cats form genuine attachments to their owners, displaying what psychologists call a <strong>"secure base effect"</strong> — the same bond observed in human infants with their parents. When their owner is present, cats show fewer stress behaviors and explore more freely.</p>
+<div class="art-img-block">🐱</div>
+<p class="art-img-cap">A cat making eye contact — one of the most direct forms of feline communication with humans.</p>
+<h3>Why Do Cats Meow?</h3>
+<p>Fascinatingly, adult cats almost <strong>never meow at each other</strong>. This vocalization evolved specifically to communicate with humans. Each cat develops a unique vocabulary tailored to the responses of its specific owner — built over years of shared living.</p>
+<p>Studies at the University of Sussex found that humans can intuitively tell when a cat's meow carries urgency versus contentment, even without prior cat ownership. The sounds appear to activate caregiving instincts in a way that is no accident of nature.</p>
+<h3>Reading Feline Body Language</h3>
+<p>Cats express affection in ways that are easy to miss: the slow blink (the "cat kiss"), head bunting, kneading, and bringing prey as gifts. These are all expressions of deep trust — you have been accepted into the pride.</p>
+<p>The next time your cat stares at you and slowly closes its eyes, try returning the gesture. You are participating in one of nature's most quietly extraordinary conversations.</p>`,
+    tags:['#cats','#behavior','#bonding','#petscience','#domestication'],
+    related:[
+      {emoji:'🧠',cat:'Cats',title:'How Smart Are Cats Really?'},
+      {emoji:'🙈',cat:'Behavior',title:"Why Cats Ignore You (And How to Fix It)"},
+      {emoji:'👃',cat:'Dogs',title:"A Dog's Extraordinary Senses Explained"},
+    ]
+  },
+  default:{
+    lead:"Animals are among the most fascinating creatures on Earth. Their behaviors, adaptations, and relationships — with each other and with us — continue to surprise scientists and enthusiasts alike.",
+    body:`
+<p>From the intricate social structures of wolf packs to the solitary grace of leopards, the animal kingdom offers endless windows into the complexity of life. <strong>Every species has a story worth telling.</strong></p>
+<div class="pull-quote">"In every walk with nature, one receives far more than one seeks." — John Muir</div>
+<h3>A World of Extraordinary Lives</h3>
+<p>Modern research has revealed that many animals possess emotional lives far richer than previously imagined — experiencing joy, grief, play, and even empathy in ways that challenge our understanding of consciousness.</p>
+<div class="art-img-block">🌿</div>
+<p class="art-img-cap">The natural world offers daily reminders of the extraordinary lives happening all around us.</p>
+<h3>The Human-Animal Bond</h3>
+<p>Whether you're a dedicated pet owner, a wildlife enthusiast, or simply someone who appreciates the beauty of the natural world, there is always something new to discover. The relationship between humans and animals spans the full spectrum — from the dog sleeping at your feet to the whale singing in the deep ocean.</p>
+<p>Each connection reminds us that we share this planet with <strong>extraordinary, conscious beings</strong> — and that our responsibility toward them is as profound as the bond itself.</p>
+<h3>Why It Matters</h3>
+<p>Understanding animals better isn't just about satisfying curiosity. It shapes how we care for pets, how we design conservation policies, and how we think about our own place in the web of life. Every story we learn deepens our capacity for wonder — and wonder is the beginning of wisdom.</p>`,
+    tags:['#animals','#nature','#wildlife','#petlove','#explore'],
+    related:[
+      {emoji:'🐶',cat:'Dogs',title:'Where Do Dogs Come From?'},
+      {emoji:'🌿',cat:'Pet Care',title:'Healthy Skin for Happy Pets'},
+      {emoji:'💧',cat:'Pet Care',title:'Keeping Pets Hydrated'},
+    ]
+  }
+};
 
-data.forEach(row=>{
-let tr=document.createElement("tr");
-if(row[0]===today){tr.classList.add("today")}
-let checked=completed[row[0]]?"checked":"";
-tr.innerHTML=`
-<td>${new Date(row[0]).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}</td>
-<td>${formatTime(row[1])}</td>
-<td>${formatTime(row[2])}</td>
-<td><input type="checkbox" ${checked}
-onchange="toggleFast('${row[0]}')"></td>
-`;
-table.appendChild(tr);
+function getArtDB(title){ return artDB[title]||artDB.default; }
+
+// ================================================
+// SPA NAVIGATION
+// ================================================
+let curArticle=null;
+
+function openArticle(data){
+  curArticle=data;
+  const c=getArtDB(data.title);
+
+  // fill article page
+  document.getElementById('bcCat').textContent=data.cat;
+  document.getElementById('bcTitle').textContent=data.title;
+  document.getElementById('artHeroEm').textContent=data.emoji;
+  document.getElementById('artHeroBadge').textContent=data.cat;
+  document.getElementById('artDate').textContent=data.date||'Apr 2026';
+  document.getElementById('artCat').textContent=data.cat;
+  document.getElementById('artStars').textContent=data.stars||'★★★★☆';
+  document.getElementById('artTitle').textContent=data.title;
+  document.getElementById('artLead').textContent=c.lead;
+  document.getElementById('artBody').innerHTML=c.body;
+  document.getElementById('artTagsRow').innerHTML=c.tags.map(t=>`<span class="art-tag">${t}</span>`).join('');
+  document.getElementById('relatedGrid').innerHTML=c.related.map(r=>`
+    <div class="rel-card" onclick="openArticle(${safeJSON(r)})">
+      <div class="rel-img">${r.emoji}</div>
+      <div class="rel-body">
+        <div class="rel-cat">${r.cat}</div>
+        <div class="rel-title">${r.title}</div>
+      </div>
+    </div>`).join('');
+
+  // sync theme icon
+  document.getElementById('themeIcon2').textContent=document.getElementById('themeIcon').textContent;
+
+  // switch page
+  document.getElementById('articlePage').scrollTop=0;
+  document.body.classList.add('on-article');
+  document.title=data.title+' — PawVerse';
+  history.pushState({article:data},data.title,'#'+encodeURIComponent(data.title));
+}
+
+function goHome(){
+  document.body.classList.remove('on-article');
+  document.title='PawVerse — Animal Life, Reimagined';
+  history.pushState({home:true},'PawVerse','#');
+}
+
+window.addEventListener('popstate',e=>{
+  if(e.state&&e.state.article) openArticle(e.state.article);
+  else{ document.body.classList.remove('on-article'); document.title='PawVerse — Animal Life, Reimagined'; }
 });
 
-function toggleFast(date){
-completed[date]=!completed[date];
-localStorage.setItem("fastingUltra",JSON.stringify(completed));
-updateProgress();
+function safeJSON(obj){ return JSON.stringify(obj).replace(/"/g,"'"); }
+function doShare(){
+  const title=curArticle?curArticle.title:'PawVerse';
+  if(navigator.share) navigator.share({title,url:location.href});
+  else navigator.clipboard.writeText(location.href).then(()=>alert('Link copied!'));
 }
 
-function updateProgress(){
-let count=Object.values(completed).filter(v=>v).length;
-let percent=(count/data.length)*100;
-document.getElementById("progressBar").style.width=percent+"%";
-document.getElementById("progressText").innerText=
-count+" / "+data.length+" completed ("+Math.floor(percent)+"%)";
+// ================================================
+// RENDER
+// ================================================
+function renderNewest(){
+  document.getElementById('newestGrid').innerHTML=newestData.map(d=>`
+    <div class="card" onclick="openArticle(${safeJSON(d)})">
+      <div class="card-img-wrap">
+        <div class="card-emoji">${d.emoji}</div>
+        <span class="card-lbl">${d.label}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">${d.cat}</div>
+        <div class="card-title">${d.title}</div>
+        <div class="card-foot"><span>${d.date}</span><span class="c-stars">${d.stars}</span></div>
+      </div>
+    </div>`).join('');
 }
-updateProgress();
+function renderRated(){
+  document.getElementById('ratedList').innerHTML=ratedData.map(d=>`
+    <div class="hcard" onclick="openArticle(${safeJSON(d)})">
+      <div class="hcard-img">${d.emoji}</div>
+      <div class="hcard-body">
+        <div class="hcard-rank">#${d.rank}</div>
+        <div class="hcard-title">${d.title}</div>
+        <div class="hcard-foot"><span class="h-stars">${d.stars}</span><span>${d.views} views</span></div>
+      </div>
+    </div>`).join('');
+}
+function renderPopular(){
+  document.getElementById('popularGrid').innerHTML=popularData.map(d=>`
+    <div class="pop-card" onclick="openArticle(${safeJSON(d)})">
+      <div class="pop-img">${d.emoji}</div>
+      <div class="pop-body">
+        <div class="pop-title">${d.title}</div>
+        <div class="pop-meta"><span class="p-stars">${d.stars}</span><span>${d.reads} reads</span></div>
+      </div>
+    </div>`).join('');
+}
+function renderRec(){
+  document.getElementById('recList').innerHTML=recData.map(d=>`
+    <div class="rec-item" onclick="openArticle(${safeJSON(d)})">
+      <div class="rec-img">${d.emoji}</div>
+      <div class="rec-body">
+        <div class="rec-cat">${d.cat}</div>
+        <div class="rec-title">${d.title}</div>
+        <div class="rec-meta">${d.date}</div>
+      </div>
+    </div>`).join('');
+}
+function renderTrending(){
+  document.getElementById('trendingWidget').innerHTML=trendingData.map(d=>`
+    <div class="t-item" onclick="openArticle(${safeJSON(d)})">
+      <div class="t-num">${d.rank}</div>
+      <div class="t-img">${d.emoji}</div>
+      <div class="t-info">
+        <div class="t-title">${d.title}</div>
+        <div class="t-meta">${d.meta}</div>
+      </div>
+    </div>`).join('');
+}
 
-/* ===== Countdown ===== */
-function updateCountdown(){
-let todayRow=data.find(d=>d[0]===today);
-if(!todayRow) return;
-let iftar=new Date(today+"T"+todayRow[2]+":00");
-let now=new Date();
-let diff=iftar-now;
-if(diff>0){
-let h=Math.floor(diff/1000/60/60);
-let m=Math.floor((diff/1000/60)%60);
-let s=Math.floor((diff/1000)%60);
-document.getElementById("countdown").innerText=
-"⏳ Iftar in: "+h+"h "+m+"m "+s+"s";
-}else{
-document.getElementById("countdown").innerText="Iftar Time 🎉";
+// ================================================
+// THEME
+// ================================================
+function toggleTheme(){
+  const night=document.documentElement.getAttribute('data-theme')==='day';
+  document.documentElement.setAttribute('data-theme',night?'night':'day');
+  const icon=night?'🌙':'☀️';
+  document.getElementById('themeIcon').textContent=icon;
+  document.getElementById('themeIcon2').textContent=icon;
+  localStorage.setItem('pv-theme',night?'night':'day');
 }
-}
-setInterval(updateCountdown,1000);
+(function(){
+  const s=localStorage.getItem('pv-theme');
+  if(s==='night'){
+    document.documentElement.setAttribute('data-theme','night');
+    document.getElementById('themeIcon').textContent='🌙';
+    document.getElementById('themeIcon2').textContent='🌙';
+  }
+})();
 
+// ================================================
+// UI HELPERS
+// ================================================
+function switchTab(btn){ btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+function filterCat(el){ document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+function subscribe(btn){
+  const inp=btn.previousElementSibling;
+  if(!inp.value.includes('@')){inp.style.borderColor='#f44336';setTimeout(()=>inp.style.borderColor='rgba(255,255,255,.3)',1500);return;}
+  btn.textContent='✓ You\'re in!';btn.style.background='#4ade80';btn.style.color='#fff';inp.value='';
+}
+function homeScrollTo(id){
+  const hp=document.getElementById('homePage');
+  const el=document.getElementById(id);
+  hp.scrollTo({top:el.offsetTop-70,behavior:'smooth'});
+}
+
+// scroll events for home page
+document.getElementById('homePage').addEventListener('scroll',function(){
+  const pct=Math.min(100,(this.scrollTop/(this.scrollHeight-this.clientHeight))*100);
+  document.getElementById('progressBar').style.width=pct+'%';
+  const btt=document.getElementById('btt');
+  this.scrollTop>400?btt.classList.add('show'):btt.classList.remove('show');
+});
+
+// scroll reveal
+const revObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revObs.unobserve(e.target);}});
+},{root:document.getElementById('homePage'),threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+// search
+document.getElementById('searchInput').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('.card,.hcard,.pop-card,.rec-item').forEach(el=>{
+    el.style.opacity=(!q||el.textContent.toLowerCase().includes(q))?'1':'0.3';
+  });
+});
+
+// ================================================
+// INIT
+// ================================================
+renderNewest();
+renderRated();
+renderPopular();
+renderRec();
+renderTrending();
 </script>
 </body>
 </html>
